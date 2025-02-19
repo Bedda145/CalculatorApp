@@ -1,11 +1,11 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace CalculatorApp2
 {
     public partial class MainPage : ContentPage
     {
         double storedValue = 0;
-        string currentOperator = string.Empty;
+        string currentOperator = "";
         bool isNewEntry = true;
 
         public MainPage()
@@ -15,48 +15,72 @@ namespace CalculatorApp2
 
         void OnButtonClicked(object sender, EventArgs e)
         {
-            Button pressed = sender as Button;
-            string input = pressed.Text;
+            Button pressedButton = sender as Button;
+            string buttonText = pressedButton.Text;
 
-            switch (input)
+            if (buttonText == "C")
             {
-                case "C":
-                    ClearAll();
-                    break;
-                case "⌫":
-                    Backspace();
-                    break;
-                case "+":
-                case "-":
-                case "x":
-                case "÷":
-                    ProcessOperator(input);
-                    break;
-                case "=":
-                    Calculate();
-                    break;
-                case "±":
-                    ToggleSign();
-                    break;
-                case "%":
-                    Percentage();
-                    break;
-                default:
-                    ProcessDigit(input);
-                    break;
+                ClearAll();
+            }
+            else if (buttonText == "⌫")
+            {
+                Backspace();
+            }
+            else if (buttonText == "=")
+            {
+                Calculate();
+            }
+            else if (buttonText == "±")
+            {
+                ToggleSign();
+            }
+            else if (buttonText == "%")
+            {
+                Percentage();
+            }
+            else
+            {
+                
+                if (buttonText == "+")
+                {
+                    ProcessOperator(buttonText);
+                }
+                else if (buttonText == "-")
+                {
+                    ProcessOperator(buttonText);
+                }
+                else if (buttonText == "x")
+                {
+                    ProcessOperator(buttonText);
+                }
+                else if (buttonText == "÷")
+                {
+                    ProcessOperator(buttonText);
+                }
+                else
+                {
+                    ProcessDigit(buttonText);
+                }
             }
         }
 
         void ProcessDigit(string digit)
         {
-            if (isNewEntry || DisplayEntry.Text == "0")
+            if (isNewEntry)
             {
                 DisplayEntry.Text = digit;
                 isNewEntry = false;
             }
             else
             {
-                DisplayEntry.Text += digit;
+                if (DisplayEntry.Text == "0")
+                {
+                    DisplayEntry.Text = digit;
+                }
+                else
+                {
+                    DisplayEntry.Text = DisplayEntry.Text + digit;
+                }
             }
         }
 
@@ -65,8 +89,7 @@ namespace CalculatorApp2
             try
             {
                 double currentValue = double.Parse(DisplayEntry.Text, CultureInfo.InvariantCulture);
-
-                if (!string.IsNullOrEmpty(currentOperator))
+                if (currentOperator != "")
                 {
                     storedValue = PerformCalculation(storedValue, currentValue, currentOperator);
                     DisplayEntry.Text = storedValue.ToString(CultureInfo.InvariantCulture);
@@ -78,7 +101,7 @@ namespace CalculatorApp2
                 currentOperator = op;
                 isNewEntry = true;
             }
-            catch (Exception)
+            catch
             {
                 DisplayEntry.Text = "Error";
             }
@@ -88,18 +111,18 @@ namespace CalculatorApp2
         {
             try
             {
-                if (string.IsNullOrEmpty(currentOperator))
+                if (currentOperator == "")
+                {
                     return;
-
+                }
                 double currentValue = double.Parse(DisplayEntry.Text, CultureInfo.InvariantCulture);
                 double result = PerformCalculation(storedValue, currentValue, currentOperator);
-
                 DisplayEntry.Text = result.ToString(CultureInfo.InvariantCulture);
                 storedValue = result;
-                currentOperator = string.Empty;
+                currentOperator = "";
                 isNewEntry = true;
             }
-            catch (Exception)
+            catch
             {
                 DisplayEntry.Text = "Error";
             }
@@ -108,13 +131,21 @@ namespace CalculatorApp2
         double PerformCalculation(double a, double b, string op)
         {
             if (op == "+")
+            {
                 return a + b;
+            }
             if (op == "-")
+            {
                 return a - b;
+            }
             if (op == "x")
+            {
                 return a * b;
+            }
             if (op == "÷")
+            {
                 return a / b;
+            }
             return b;
         }
 
@@ -122,19 +153,22 @@ namespace CalculatorApp2
         {
             DisplayEntry.Text = "0";
             storedValue = 0;
-            currentOperator = string.Empty;
+            currentOperator = "";
             isNewEntry = true;
         }
 
         void Backspace()
         {
-            if (!isNewEntry && DisplayEntry.Text.Length > 0)
+            if (isNewEntry == false)
             {
-                DisplayEntry.Text = DisplayEntry.Text.Substring(0, DisplayEntry.Text.Length - 1);
-                if (DisplayEntry.Text == string.Empty)
+                if (DisplayEntry.Text.Length > 0)
                 {
-                    DisplayEntry.Text = "0";
-                    isNewEntry = true;
+                    DisplayEntry.Text = DisplayEntry.Text.Substring(0, DisplayEntry.Text.Length - 1);
+                    if (DisplayEntry.Text == "")
+                    {
+                        DisplayEntry.Text = "0";
+                        isNewEntry = true;
+                    }
                 }
             }
         }
@@ -147,9 +181,9 @@ namespace CalculatorApp2
                 currentValue = -currentValue;
                 DisplayEntry.Text = currentValue.ToString(CultureInfo.InvariantCulture);
             }
-            catch (Exception)
+            catch
             {
-               
+                
             }
         }
 
@@ -158,10 +192,10 @@ namespace CalculatorApp2
             try
             {
                 double currentValue = double.Parse(DisplayEntry.Text, CultureInfo.InvariantCulture);
-                currentValue /= 100;
+                currentValue = currentValue / 100;
                 DisplayEntry.Text = currentValue.ToString(CultureInfo.InvariantCulture);
             }
-            catch (Exception)
+            catch
             {
                 
             }
